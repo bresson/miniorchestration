@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:4-bionic
+    volumes:
+      - ./auth/data:/data/db
+    ports:
+      - 5000:80
+  auth:
+    build: 
+      context: ./auth
+      dockerfile: Dockerfile.dev
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - MONGODB_URL=${MONGODB_URL}
+  app:
+    build: 
+      context: ./app
+      dockerfile: Dockerfile.dev   
+    volumes:
+      - ./app/data:/usr/src/app/data
+      - ./app/src:/usr/src/app/src
+  ghi:
+    build:
+      context: ./ghi
+      dockerfile: Dockerfile.dev
+    ports:
+      - 8910:80
+    volumes:
+      - ./ghi/static:/usr/share/nginx/html
